@@ -15,10 +15,10 @@ import java.util.ArrayList;
 
 public class SJJson {
     private static final String TAG = "SJJson";
-    private String jsonString;
-    private ArrayList<SJTweet> tweets = new ArrayList<SJTweet>();
+    private static String jsonString;
+    private static ArrayList<SJTweet> tweets = new ArrayList<SJTweet>();
 
-    public void jsonAsString(Context context){
+    public static void jsonAsString(Context context){
 
 
         try {
@@ -34,19 +34,16 @@ public class SJJson {
 //        return jsonString;
     }
 
-    public ArrayList<SJTweet> parseTweets(){
-
-
+    public static ArrayList<SJTweet> parseTweets(){
 
         try {
             JSONArray jsonArray = new JSONArray(jsonString);
             for(int i = 0; i < jsonArray.length(); i++){
                 SJTweet t = new SJTweet(jsonArray.getJSONObject(i));
                 tweets.add(t);
-                Log.d(TAG, "parseTweets: tweet - " + t.text);
+//                Log.d(TAG, "parseTweets: tweet - " + t.user.name);
             }
 
-            // should this method create an ArrayList or JSONArray?
         } catch(Exception e){
             Log.d(TAG, "parseJsonString: Exception - " + e);
         }
