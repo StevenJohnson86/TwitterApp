@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 public class SJUser {
     private static final String TAG = "SJUser";
-    String name, profileImg, location;
+    public String name, profileImg, location;
 
     public SJUser(JSONObject j){
         try {

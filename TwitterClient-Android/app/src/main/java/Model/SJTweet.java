@@ -10,8 +10,8 @@ import org.json.JSONObject;
 
 public class SJTweet {
     private static final String TAG = "SJTweet";
-    String text, id;
-    SJUser user;
+    public String text, id;
+    public SJUser user;
 
     public SJTweet(JSONObject j){
         try {

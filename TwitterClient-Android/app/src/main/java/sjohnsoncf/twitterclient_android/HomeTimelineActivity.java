@@ -4,14 +4,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import Model.SJJson;
 import Model.SJTweet;
@@ -19,40 +18,55 @@ import Model.TweetAdapter;
 
 public class HomeTimelineActivity extends AppCompatActivity {
     private static final String TAG = "HomeTimelineActivity";
+//    private boolean tweetsInitialized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_timeline);
+
         getTweets();
+        //instantiate once? static initializer? add functionality in activity lifecycle methods?
+
+
 
     }
 
     public void getTweets(){
+//        tweetsInitialized = true;
         ListView homeListView = (ListView) findViewById(R.id.HomeListView);
         SJJson.jsonAsString(this);
         ArrayList<SJTweet> tweets = SJJson.parseTweets();
 
-//        ArrayAdapter<String> myAdapter = new ArrayAdapter<Stringt>(this, android.R.layout.simple_list_item_1, tweets);
-        TweetAdapter myAdapter = new TweetAdapter(this,R.layout.tweet_view_item, R.id.tweet_text, tweets);
+        TweetAdapter myAdapter = new TweetAdapter(tweets) {
+
+            @Override
+            public View getView(int i, View view, ViewGroup viewGroup) {
+                SJTweet currentTweet = (SJTweet) this.getItem(i);
+
+                view = getLayoutInflater().inflate(R.layout.tweet_view_item, null);
+
+//                ImageView profileImg = (ImageView) view.findViewById();
+                TextView userText = (TextView) view.findViewById(R.id.tweet_user);
+                TextView tweetText = (TextView) view.findViewById(R.id.tweet_text);
+                userText.setText(currentTweet.user.name);
+                tweetText.setText(currentTweet.text);
+                return view;
+            }
+        };
         homeListView.setAdapter(myAdapter);
 
         homeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                LinearLayout lin = (LinearLayout) view;
-                TextView t = (TextView) lin.findViewById(R.id.tweet_text);
+                RelativeLayout itemContainer = (RelativeLayout) view;
+                TextView t = (TextView) itemContainer.findViewById(R.id.tweet_text);
                 Log.d(TAG, "onItemClick: Tweet - " + t.getText());
 
             }
         });
     }
 
-//    public void logTweet(View view){
-//
-//        Log.d(TAG, "logTweet: Tweet - " + view);
-//
-//    }
 
 
 }
