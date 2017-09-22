@@ -10,6 +10,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.twitter.sdk.android.core.Twitter;
+
 import java.util.ArrayList;
 
 import Model.SJJson;
@@ -23,7 +25,9 @@ public class HomeTimelineActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_timeline);
+        Twitter.initialize(this);
+        Log.d(TAG, "onCreate: Twitter Instance: " + Twitter.getInstance());
+        setContentView(R.layout.activity_home_timeline);git add
 
         getTweets();
         //instantiate once? static initializer? add functionality in activity lifecycle methods?
