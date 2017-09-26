@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -31,7 +30,6 @@ public class SJJson {
         } catch(Exception e){
             Log.d(TAG, "jsonAsString: Exception - " + e);
         }
-//        return jsonString;
     }
 
     public static ArrayList<SJTweet> parseTweets(){
@@ -41,7 +39,6 @@ public class SJJson {
             for(int i = 0; i < jsonArray.length(); i++){
                 SJTweet t = new SJTweet(jsonArray.getJSONObject(i));
                 tweets.add(t);
-//                Log.d(TAG, "parseTweets: tweet - " + t.user.name);
             }
 
         } catch(Exception e){
