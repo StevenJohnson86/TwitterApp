@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -21,20 +22,27 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Twitter.initialize(this);
         setContentView(R.layout.activity_login);
+        Twitter.initialize(this);
+        TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
+        final Intent homeActyIntent = new Intent(this, HomeTimelineActivity.class);
+        if(session != null){
+            startActivity(homeActyIntent);
+        }
 
         twitterLogin = (TwitterLoginButton) findViewById(R.id.twitter_login_btn);
         twitterLogin.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
                 Log.d(TAG, "success: login result -> " + result);
-                finish();
+//                finish();
+                startActivity(homeActyIntent);
             }
 
             @Override
             public void failure(TwitterException exception) {
                 Log.d(TAG, "failure: login exception -> " + exception);
+                Toast.makeText(LoginActivity.this, "There was a problem logging in. Please retry or contact support.", Toast.LENGTH_LONG).show();
 
             }
         });
