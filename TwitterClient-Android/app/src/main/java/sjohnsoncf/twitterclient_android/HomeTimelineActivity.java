@@ -1,72 +1,46 @@
 package sjohnsoncf.twitterclient_android;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterApiClient;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.models.Tweet;
+import com.twitter.sdk.android.tweetui.FixedTweetTimeline;
 
-import Model.SJJson;
-import Model.SJTweet;
-import Model.TweetAdapter;
+import java.util.List;
 
-public class HomeTimelineActivity extends AppCompatActivity {
+import Model.TimelineActivity;
+import retrofit2.Call;
+
+public class HomeTimelineActivity extends TimelineActivity {
     private static final String TAG = "HomeTimelineActivity";
-//    private boolean tweetsInitialized = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_timeline);
+    public void setupTimeline(){
 
-        getTweets();
-        //instantiate once? static initializer? add functionality in activity lifecycle methods?
+        TwitterApiClient apiClient = TwitterCore.getInstance().getApiClient();
+        Call<List<Tweet>> homeTLCall = apiClient.getStatusesService().homeTimeline(null,null,null,null,null,null,null);
 
-
-
-    }
-
-    public void getTweets(){
-//        tweetsInitialized = true;
-        ListView homeListView = (ListView) findViewById(R.id.HomeListView);
-        SJJson.jsonAsString(this);
-        ArrayList<SJTweet> tweets = SJJson.parseTweets();
-
-        TweetAdapter myAdapter = new TweetAdapter(tweets) {
-
+        homeTLCall.enqueue(new Callback<List<Tweet>>() {
             @Override
-            public View getView(int i, View view, ViewGroup viewGroup) {
-                SJTweet currentTweet = (SJTweet) this.getItem(i);
+            public void success(Result<List<Tweet>> result) {
 
-                view = getLayoutInflater().inflate(R.layout.tweet_view_item, null);
-
-//                ImageView profileImg = (ImageView) view.findViewById();
-                TextView userText = (TextView) view.findViewById(R.id.tweet_user);
-                TextView tweetText = (TextView) view.findViewById(R.id.tweet_text);
-                userText.setText(currentTweet.user.name);
-                tweetText.setText(currentTweet.text);
-                return view;
+                FixedTweetTimeline.Builder builder = new FixedTweetTimeline.Builder().setTweets(result.data);
+                FixedTweetTimeline homeTL = builder.build();
+                updateListViewWithList(homeTL);
             }
-        };
-        homeListView.setAdapter(myAdapter);
 
-        homeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                RelativeLayout itemContainer = (RelativeLayout) view;
-                TextView t = (TextView) itemContainer.findViewById(R.id.tweet_text);
-                Log.d(TAG, "onItemClick: Tweet - " + t.getText());
+            public void failure(TwitterException exception) {
 
+                Log.d(TAG, "failure: homeTLCall-> " + exception.getMessage());
             }
         });
+
     }
-
-
 
 }
